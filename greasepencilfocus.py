@@ -463,12 +463,9 @@ class LaunchModal(bpy.types.Operator):
 # store keymaps here to access after registration
 addon_keymaps = []
 
-@persistent
-def on_reload(dummy):
-    init_handlers()
-    bpy.app.handlers.depsgraph_update_post.append(active_layer_switch_handler)
-    
+
 def active_layer_switch_handler(scene):
+    #print("UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUULLLLLLLLLLLLLLLLLLLLLLLLLLLFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF")
     # Access the active object
     active_object = bpy.context.active_object
 
@@ -489,8 +486,18 @@ def active_layer_switch_handler(scene):
             print("Active Grease Pencil Layer switched to:", active_layer.info)
             layer_selected_callback()
 
+@persistent
+def on_reload(dummy):
+    bpy.app.handlers.depsgraph_update_post.append(active_layer_switch_handler)
+    init_handlers()
+    
+  
+
+
 
 def init_handlers():    
+
+    #print('init handlers')
     
     bpy.types.Scene.greasepencilfocus = PointerProperty(type=GREASEPENCILFOCUS_Props)
     subscribe_owner = bpy.types.Scene.greasepencilfocus # apparently any python object can be owner ??
@@ -508,13 +515,13 @@ def init_handlers():
 
     
 
-    # subscribe_to_gp = bpy.types.GreasePencilLayers, "active_index"
-    # bpy.msgbus.subscribe_rna(
-    #     key=subscribe_to_gp,
-    #     owner=subscribe_owner,
-    #     args=(),
-    #     notify=layer_selected_callback
-    # )
+    subscribe_to_gp = bpy.types.GreasePencilLayers, "active_index"
+    bpy.msgbus.subscribe_rna(
+        key=subscribe_to_gp,
+        owner=subscribe_owner,
+        args=(),
+        notify=layer_selected_callback
+    )
 
     ############# SUBSCRIBE TO GP BRUSH TYPE SWITCH
     log("GP focus addon init_handlers")
